@@ -42,6 +42,8 @@ namespace uICAL {
                 else {
                     throw ParseError(string("Unknown RRULE:FREQ type: ") + value);
                 }
+                Serial.println("FREQUENCY");
+                Serial.println(value);
             }
             else if (key == "WKST") {
                 this->wkst = this->parseDay(value);
@@ -65,6 +67,7 @@ namespace uICAL {
                 this->byHour = toVector<unsigned>(value);
             }
             else if (key == "BYDAY") { // FREQ=MONTHLY;INTERVAL=2;COUNT=10;BYDAY=1SU,-1SU
+                Serial.println("BYDAY");
                 this->byDay = this->parseByDay(value);
             }
             else if (key == "BYWEEKNO") {
@@ -104,6 +107,8 @@ namespace uICAL {
         Day_vector array;
         value.tokenize(',', [&](const string part){
             int index;
+            Serial.println("PART =");
+            Serial.println(part);
             if (part.length() > 2) {
                 index = part.substr(0, part.length() - 2).as_int();
             }
@@ -111,7 +116,7 @@ namespace uICAL {
                 index = 0;
             }
 
-            DateTime::Day day = this->parseDay(part.substr(part.length() - 2, string::npos));
+            DateTime::Day day = this->parseDay(part.substr(part.length() - 2, 2));
             array.push_back(Day_pair(index, day));
         });
         return array;
@@ -156,7 +161,7 @@ namespace uICAL {
             case Freq::DAILY:     return "DAILY";
             case Freq::WEEKLY:    return "WEELKY";
             case Freq::MONTHLY:   return "MONTHLY";
-            case Freq::YEARLY:    return "WEEKLY";
+            case Freq::YEARLY:    return "YEARLY";
             default:
                 string err("Unknown frequency index: ");
                 err += (int)freq;

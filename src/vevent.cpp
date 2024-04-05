@@ -21,7 +21,13 @@ namespace uICAL {
         this->start = DateTime(dtStart->value + dtStart->getParam("TZID"), tzmap);
         this->end = DateTime(dtEnd->value + dtStart->getParam("TZID"), tzmap);
 
-        this->summary = summary->value;
+        if (summary == nullptr){
+            this->summary = "";
+        }
+        else{
+            this->summary = summary->value;
+        }
+        
 
         if (rRule == nullptr){
             this->rrule = new_ptr<RRule>("", this->start);
