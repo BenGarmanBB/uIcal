@@ -21,6 +21,7 @@ namespace uICAL {
             bool valid() const;
 
             ymd_t ymd(const TZ_ptr tz) const;
+            ymd_t ymd() const;
             ymdhms_t ymdhms(const TZ_ptr tz) const;
             ymdhms_t ymdhms_as_utc(const TZ_ptr tz) const;
 

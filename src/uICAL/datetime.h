@@ -28,6 +28,8 @@ namespace uICAL {
             bool valid() const;
 
             DateStamp datestamp() const;
+            string dateString() const;
+            string printString() const;
             DateStamp datestamp(const TZ_ptr& tz) const;
 
             enum class Day {

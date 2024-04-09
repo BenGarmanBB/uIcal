@@ -13,10 +13,10 @@ namespace uICAL {
 
             using eventP_t = std::function<bool (const VEvent&)>;
 
-            static Calendar_ptr load(istream& ical);
-            static Calendar_ptr load(istream& ical, eventP_t addEvent);
-            static Calendar_ptr load(istream& ical, TZMap_ptr& tzmap);
-            static Calendar_ptr load(istream& ical, TZMap_ptr& tzmap, eventP_t addEvent);
+            static Calendar_ptr load(istream& ical, DateTime date);
+            static Calendar_ptr load(istream& ical, eventP_t addEvent, DateTime date);
+            static Calendar_ptr load(istream& ical, TZMap_ptr& tzmap, DateTime date);
+            static Calendar_ptr load(istream& ical, TZMap_ptr& tzmap, eventP_t addEvent, DateTime date);
 
             void addEvent(const VEvent_ptr &);
 

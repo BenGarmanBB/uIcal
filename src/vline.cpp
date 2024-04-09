@@ -13,7 +13,6 @@ namespace uICAL {
         if(line.empty()) {
             this->name = string::none();
             this->value = string::none();
-            log_error("%s", "VLINE is empty");
             // throw ParseError("VLINE is empty");
         }
 
@@ -23,7 +22,6 @@ namespace uICAL {
         if (colon == string::npos) {
             this->name = string::none();
             this->value = string::none();
-            log_error("VLINE does not have a ':' \"%s\"", line.c_str());
             // throw ParseError(string("VLINE does not have a ':' \"") + line + "\"");
         }
 
@@ -49,10 +47,6 @@ namespace uICAL {
     void VLine::readParams(const string& str) {
         str.tokenize(';', [&](const string token){
             size_t equals = token.find("=");
-            if (equals == string::npos) {
-                log_error("Bad param: \"%s\"", token.c_str());
-                // throw ParseError(string("Bad param: ") + token);
-            }
             const string name = token.substr(0, equals);
             const string value = token.substr(equals + 1, token.length());
             this->params.insert(std::pair<string, string>(name, value));

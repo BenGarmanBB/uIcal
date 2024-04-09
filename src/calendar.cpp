@@ -16,21 +16,21 @@
 #include "uICAL/vlinestream.h"
 
 namespace uICAL {
-    Calendar_ptr Calendar::load(istream& ical) {
+    Calendar_ptr Calendar::load(istream& ical, DateTime date) {
         TZMap_ptr tzmap = new_ptr<TZMap>();
-        return Calendar::load(ical, tzmap, [](const VEvent&) { return true; });
+        return Calendar::load(ical, tzmap, [](const VEvent&) { return true; }, date);
     }
 
-    Calendar_ptr Calendar::load(istream& ical, eventP_t addEvent) {
+    Calendar_ptr Calendar::load(istream& ical, eventP_t addEvent, DateTime date) {
         TZMap_ptr tzmap = new_ptr<TZMap>();
-        return Calendar::load(ical, tzmap, addEvent);
+        return Calendar::load(ical, tzmap, addEvent, date);
     }
 
-    Calendar_ptr Calendar::load(istream& ical, TZMap_ptr& tzmap) {
-        return Calendar::load(ical, tzmap, [](const VEvent&) { return true; });
+    Calendar_ptr Calendar::load(istream& ical, TZMap_ptr& tzmap, DateTime date) {
+        return Calendar::load(ical, tzmap, [](const VEvent&) { return true; }, date);
     }
 
-    Calendar_ptr Calendar::load(istream& ical, TZMap_ptr& tzmap, eventP_t addEvent) {
+    Calendar_ptr Calendar::load(istream& ical, TZMap_ptr& tzmap, eventP_t addEvent, DateTime date) {
         VLineStream lines(ical);
 
         VObjectStream::lineP_t useLine = [](const string parent, const string line) {
@@ -81,11 +81,13 @@ namespace uICAL {
             }
             else if (child->getName() == "VEVENT") {
                 VEvent_ptr event = new_ptr<VEvent>(child, tzmap);
-                addEvent(*event);
-                if (addEvent(*event)) {
-                    cal->addEvent(event);
-                } else {
-                    log_debug("Event ignored: %s @ %s", event->summary.c_str(), event->start.as_str().c_str());
+                if (event->og_rrule != "" || (event->start.dateString() == date.dateString())){
+                    addEvent(*event);
+                    if (addEvent(*event)) {
+                        cal->addEvent(event);
+                    } else {
+                        log_debug("Event ignored: %s @ %s", event->summary.c_str(), event->start.as_str().c_str());
+                    }
                 }
             }
         }

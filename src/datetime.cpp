@@ -49,7 +49,7 @@ namespace uICAL {
             ds = DateStamp(datetime.substr(0, 8));
             this->tz = new_ptr<TZ>("Z", tzmap);  
             this->construct(ds, tz);
-            
+            /*
             struct tm localMidnight;
 
             localMidnight.tm_year = ds.year -1900;
@@ -59,9 +59,10 @@ namespace uICAL {
             localMidnight.tm_min = 0;
             localMidnight.tm_sec = 0;
 
+
             // Local midnight
             time_t localTimeSinceEpoch = mktime(&localMidnight);
-            this->epochtime = EpochTime(localTimeSinceEpoch);
+            this->epochtime = EpochTime(localTimeSinceEpoch);*/
 
         } 
         else {  // 15+-char datetime
@@ -99,6 +100,15 @@ namespace uICAL {
             std::get<0>(ymdhms), std::get<1>(ymdhms), std::get<2>(ymdhms),
             std::get<3>(ymdhms), std::get<4>(ymdhms), std::get<5>(ymdhms)
         );
+    }
+    
+    string DateTime::dateString() const {
+        auto ymdhms = this->epochtime.ymdhms(TZ::unaware());
+        auto dateStamp = DateStamp(
+            std::get<0>(ymdhms), std::get<1>(ymdhms), std::get<2>(ymdhms),
+            0,0,0
+        );
+        return string(dateStamp.year) + string(dateStamp.month) + string(dateStamp.day);
     }
 
     DateStamp DateTime::datestamp(const TZ_ptr& tz) const {
@@ -172,6 +182,19 @@ namespace uICAL {
         out << string::fmt(fmt_02d, std::get<5>(ymdhms));
 
         // this->tz->str(out);
+    }
+
+    
+    string DateTime::printString() const {
+        auto ymdhms = this->epochtime.ymdhms_as_utc(this->tz);
+
+        return ( string::fmt(fmt_04d, std::get<0>(ymdhms)) + "-" + 
+        string::fmt(fmt_02d, std::get<1>(ymdhms)) + "-" + 
+        string::fmt(fmt_02d, std::get<2>(ymdhms)) +
+        "T" +
+        string::fmt(fmt_02d, std::get<3>(ymdhms)) + ":" + 
+        string::fmt(fmt_02d, std::get<4>(ymdhms)) + ":" + 
+        string::fmt(fmt_02d, std::get<5>(ymdhms)));
     }
 
     long long DateTime::epoch_seconds() const {

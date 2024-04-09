@@ -34,6 +34,11 @@ namespace uICAL {
         return ymd_t(std::get<0>(ymd), std::get<1>(ymd), std::get<2>(ymd));
     }
 
+    EpochTime::ymd_t EpochTime::ymd() const {
+        auto ymd = civil_from_days(this->epochSeconds / (24 * 60 * 60));
+
+        return ymd_t(std::get<0>(ymd), std::get<1>(ymd), std::get<2>(ymd));
+    }
     EpochTime::ymdhms_t EpochTime::ymdhms(const TZ_ptr tz) const {
         seconds_t seconds = tz->fromUTC(this->epochSeconds);
 

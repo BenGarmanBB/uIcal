@@ -19,7 +19,13 @@ namespace uICAL {
         VLine_ptr summary = obj->getPropertyByName("SUMMARY");
 
         this->start = DateTime(dtStart->value + dtStart->getParam("TZID"), tzmap);
-        this->end = DateTime(dtEnd->value + dtStart->getParam("TZID"), tzmap);
+
+        if (dtEnd == nullptr){
+            this->end = DateTime(dtStart->value + dtStart->getParam("TZID"), tzmap);
+        }
+        else{
+            this->end = DateTime(dtEnd->value + dtStart->getParam("TZID"), tzmap);
+        }
 
         if (summary == nullptr){
             this->summary = "";
@@ -31,11 +37,12 @@ namespace uICAL {
 
         if (rRule == nullptr){
             this->rrule = new_ptr<RRule>("", this->start);
+            this->og_rrule = "";
         }
         else{
             this->rrule = new_ptr<RRule>(rRule->value, this->start);
+            this->og_rrule = rRule->value;
         }
-        
     }
 
     void VEvent::str(ostream& out) const {
