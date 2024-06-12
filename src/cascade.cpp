@@ -62,15 +62,21 @@ namespace uICAL {
             return false;
         }
 
-        return this->resetCascade(it, [&](counters_t::iterator it) {
-            while (!(*it)->syncLock(begin, (*it)->value())) {
-                if (!(*it)->next()) {
-                    ostream out;
-                    out << "Can not seek " << (*it)->name() << " (" << "base: " << base << " from: " << begin << ")";
-                    throw ParseError(out);
+        try {
+            return this->resetCascade(it, [&](counters_t::iterator it) {
+                while (!(*it)->syncLock(begin, (*it)->value())) {
+                    if (!(*it)->next()) {
+                        ostream out;
+                        out << "Can not seek " << (*it)->name() << " (" << "base: " << base << " from: " << begin << ")";
+                        throw ParseError(out);
+                    }
                 }
-            }
-        });
+            });
+        }
+        catch (ParseError){
+            return false;
+        }
+        
     }
 
     bool Cascade::resetCascade(counters_t::iterator it, sync_f sync) {

@@ -81,7 +81,7 @@ namespace uICAL {
             }
             else if (child->getName() == "VEVENT") {
                 VEvent_ptr event = new_ptr<VEvent>(child, tzmap);
-                if (event->og_rrule != "" || (event->start.dateString() == date.dateString())){
+                if (event->og_rrule != "" || (date.epoch_seconds() <= event->start.epoch_seconds() && event->start.epoch_seconds() <= (date.epoch_seconds() + 86400))){
                     addEvent(*event);
                     if (addEvent(*event)) {
                         cal->addEvent(event);

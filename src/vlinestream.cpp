@@ -28,7 +28,8 @@ namespace uICAL {
                 this->currentLine = new_ptr<VLine>(line);
             }
             else {
-                this->currentLine = nullptr;
+                // this->currentLine = nullptr;
+                this->currentLine = new_ptr<VLine>("");
             }
         }
         this->repeat = false;

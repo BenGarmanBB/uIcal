@@ -27,8 +27,9 @@ namespace uICAL {
         {
             DateTime end = this->rrule->now() + span;
 
-            if (end <= this->range_begin)
+            if (end <= this->range_begin){
                 continue;
+            }
             return true;
         }
         return false;
