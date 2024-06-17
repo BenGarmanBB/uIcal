@@ -42,6 +42,7 @@ namespace uICAL {
             string intAsString(int value) const;
 
             bool excluded(const DateTime& now) const;
+            std::vector<string> excludedArray;
 
             const DateTime dtstart;
 

@@ -15,6 +15,7 @@ namespace uICAL {
             std::map<string, string> params;
             string value;
             string getParam(const string& key);
+            using vector = std::vector<VLine_ptr>;
 
             void str(ostream& out) const;
 

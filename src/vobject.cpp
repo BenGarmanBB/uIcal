@@ -26,6 +26,16 @@ namespace uICAL {
         return nullptr;
     }
 
+    VLine::vector VObject::listProperties(const string& name) const {
+        VLine::vector ret;
+        for (auto line : this->lines) {
+            if (line->name == name) {
+                ret.push_back(line);
+            }
+        }
+        return ret;
+    }
+
     VObject::vector VObject::listObjects(const string& name) const {
         VObject::vector ret;
         for (auto child : this->children) {

@@ -17,6 +17,7 @@ namespace uICAL {
         VLine_ptr dtEnd = obj->getPropertyByName("DTEND");
         VLine_ptr rRule = obj->getPropertyByName("RRULE");
         VLine_ptr summary = obj->getPropertyByName("SUMMARY");
+        auto exdates = obj->listProperties("EXDATE");
 
         this->start = DateTime(dtStart->value + dtStart->getParam("TZID"), tzmap);
 
@@ -43,6 +44,11 @@ namespace uICAL {
             this->rrule = new_ptr<RRule>(rRule->value, this->start);
             this->og_rrule = rRule->value;
         }
+
+        for (auto exdate : exdates) {
+            this->rrule->exclude(DateTime(exdate->value + exdate->getParam("TZID"), tzmap));
+        }
+
     }
 
     void VEvent::str(ostream& out) const {
