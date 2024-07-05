@@ -24,6 +24,7 @@ namespace uICAL {
 
         protected:
             void add(const string& id, const string& name, const string& tz);
+            void add(const string& id, const string& name, int offset);
             int parseOffset(const string& offset) const;
 
             typedef struct {

@@ -7,6 +7,8 @@
 #include "uICAL/tz.h"
 #include "uICAL/vline.h"
 #include "uICAL/vobject.h"
+#include <UrlEncode.h>
+#include <HTTPClient.h>
 
 namespace uICAL {
     TZMap::TZMap() {
@@ -14,15 +16,32 @@ namespace uICAL {
 
     void TZMap::add(const VObject_ptr& timezone) {
         string tzId = timezone->getPropertyByName("TZID")->value;
+        const char* baseUrl = "https://partflow-test.blueberrytest.com/api/device/getTimezoneOffset/";
 
-        auto standards = timezone->listObjects("STANDARD");
-        for (auto standard : standards) {
+        time_t now = time(nullptr);
+        struct tm timeinfo;
+        gmtime_r(&now, &timeinfo);
+        char dateStr[11];
+        strftime(dateStr, sizeof(dateStr), "%Y-%m-%d", &timeinfo);
 
-            string offset = standard->getPropertyByName("TZOFFSETFROM")->value;
-            string name = tzId;
+        String encodedDate = urlEncode(dateStr);
+        String encodedTzId = urlEncode(tzId.c_str());
 
-            this->add(tzId, name, offset);
+        String fullUrl = String(baseUrl) + encodedTzId + "/" + encodedDate;
+        HTTPClient http;
+        http.begin(fullUrl);
+        int httpCode = http.GET();
+        if (httpCode > 0) {
+            String payload = http.getString();
+            payload.replace("\"", "");
+            int offset = payload.toInt();
+            this->add(tzId, tzId, offset);
         }
+    }
+
+    void TZMap::add(const string& id, const string& name, int offset) {
+        this->id_attrib_map[id].offset = offset;
+        this->id_attrib_map[id].name = name;
     }
 
     void TZMap::add(const string& id, const string& name, const string& tz) {
