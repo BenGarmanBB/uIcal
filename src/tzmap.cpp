@@ -9,14 +9,16 @@
 #include "uICAL/vobject.h"
 #include <UrlEncode.h>
 #include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 namespace uICAL {
     TZMap::TZMap() {
     }
 
     void TZMap::add(const VObject_ptr& timezone) {
+        Serial.println("Adding timezone");
         string tzId = timezone->getPropertyByName("TZID")->value;
-        const char* baseUrl = "https://partflow-test.blueberrytest.com/api/device/getTimezoneOffset/";
+        const char* baseUrl = "https://partflow-test.blueberrytest.com/api/device/getTimezoneOffset";
 
         time_t now = time(nullptr);
         struct tm timeinfo;
@@ -24,13 +26,17 @@ namespace uICAL {
         char dateStr[11];
         strftime(dateStr, sizeof(dateStr), "%Y-%m-%d", &timeinfo);
 
-        String encodedDate = urlEncode(dateStr);
-        String encodedTzId = urlEncode(tzId.c_str());
-
-        String fullUrl = String(baseUrl) + encodedTzId + "/" + encodedDate;
+        StaticJsonDocument<200> jsonBody;
+        jsonBody["timezone"] = tzId.c_str();
+        jsonBody["date"] = dateStr;
+        
+        char buffer[200];
+        size_t n = serializeJson(jsonBody, buffer);
+        buffer[n] = '\0';
         HTTPClient http;
-        http.begin(fullUrl);
-        int httpCode = http.GET();
+        http.begin(baseUrl);
+        http.addHeader("Content-Type", "application/json");
+        int httpCode = http.POST(buffer);
         if (httpCode > 0) {
             String payload = http.getString();
             payload.replace("\"", "");

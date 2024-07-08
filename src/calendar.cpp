@@ -71,7 +71,7 @@ namespace uICAL {
         }
 
         Calendar_ptr cal = new_ptr<Calendar>();
-
+        std::vector<VObject_ptr> eventChid;
         for (;;) {
             auto child = stm.nextObject(true);
             if (child == nullptr) {
@@ -81,8 +81,12 @@ namespace uICAL {
                 tzmap->add(child);
             }
             else if (child->getName() == "VEVENT") {
-                VEvent_ptr event = new_ptr<VEvent>(child, tzmap);
-                if (event->og_rrule != "" || (date.epoch_seconds() - 86400 <= event->start.epoch_seconds() && event->start.epoch_seconds() <= (date.epoch_seconds() + 86400))){
+                eventChid.push_back(child);
+            }
+        }
+        for(auto& child : eventChid) {
+            VEvent_ptr event = new_ptr<VEvent>(child, tzmap);
+            if (event->og_rrule != "" || (date.epoch_seconds() - 86400 <= event->start.epoch_seconds() && event->start.epoch_seconds() <= (date.epoch_seconds() + 86400))){
                     addEvent(*event);
                     if (addEvent(*event)) {
                         cal->addEvent(event);
@@ -90,7 +94,6 @@ namespace uICAL {
                         log_debug("Event ignored: %s @ %s", event->summary.c_str(), event->start.as_str().c_str());
                     }
                 }
-            }
         }
         return cal;
     }
