@@ -60,31 +60,7 @@ namespace uICAL {
     }
 
     int TZ::parseOffset(const string& tz) {
-        if (tz == "Z") {
-            return 0;
-        }
-        try {
-            if (tz.length() == 5) {
-                char sign;
-                unsigned tzH, tzM;
-
-                // e.g.: +0200
-                sign = tz.at(0);
-                tzH = tz.substr(1, 2).as_int();
-                tzM = tz.substr(3, 2).as_int();
-
-                int offset = (tzH * 60) + tzM;
-                if (sign == '-') {
-                    offset *= -1;
-                }
-                return offset;
-            }
-        }
-        catch (std::invalid_argument const &e)
-        {}
-        catch (std::out_of_range const &e)
-        {}
-        throw ValueError("Bad timezone: \"" + tz + "\"");
+        return 0;
     }
 
     void TZ::offsetAsString(ostream& out, int offsetMins) {
