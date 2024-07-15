@@ -43,6 +43,7 @@ namespace uICAL {
             int offset = payload.toInt();
             this->add(tzId, tzId, offset);
         }
+		http.end();
     }
 
     void TZMap::add(const string& id, const string& name, int offset) {
